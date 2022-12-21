@@ -1,4 +1,6 @@
 import platform from '../img/platform.png'
+import hills from '../img/hills.png'
+import background from '../img/background.png'
 
 const canvas = document.querySelector('canvas')
 
@@ -8,8 +10,6 @@ canvas.width = 1024
 canvas.height = 576
 
 const gravity = 1.5
-
-console.log(platform)
 
 class Player {
     constructor() {
@@ -65,14 +65,52 @@ class Platform {
     }
 }
 
-const image = new Image()
-image.src = platform
-console.log(image)
+
+class GenericObject {
+    constructor({ x, y, image }) {
+        this.position = {
+            x: -1,
+            y: -1
+        }
+        this.image = image
+        this.width = image.width
+        this.height = image.height
+
+    }
+    draw() {
+        c.drawImage(this.image, this.position.x, this.position.y)
+    }
+}
+
+function createImage(imageSrc) {
+    const image = new Image()
+    image.src = imageSrc
+    return image
+}
+
+const platformImage = createImage(platform)
 
 const player = new Player()
 const platforms = [
-    new Platform({x: -1, y: 470, image}), 
-    new Platform({x: 500, y: 300, image})
+    new Platform({
+        x: -1,
+        y: 470,
+        image: platformImage
+    }), 
+    new Platform({x: platformImage.width - 3, y: 470, image: platformImage})
+]
+
+const genericObjects = [
+    new GenericObject({
+        x: 0,
+        y: 0,
+        image: createImage(background)
+    }),
+    new GenericObject({
+        x: 0,
+        y: 0,
+        image: createImage(hills)
+    })
 ]
 
 const keys = {
@@ -93,9 +131,15 @@ function animate() {
     c.fillStyle = 'white'
     c.fillRect(0, 0, canvas.width, canvas.height)
 
-    platforms.forEach(platform => {
+    genericObjects.forEach(genericObject => {
+        genericObject.draw()
+    })
+
+    platforms.forEach((platform) => {
         platform.draw()
     })
+
+    player.update()
 
     if (keys.right.pressed && player.position.x < 400) {
         player.velocity.x = 5
@@ -109,10 +153,16 @@ function animate() {
             platforms.forEach(platform => {
                 platform.position.x -= 5
             })
+            genericObjects.forEach(genericObject => {
+                genericObject.position.x -= 3
+            })
         } else if (keys.left.pressed) {
             scrollOffset -= 5
             platforms.forEach(platform => {
                 platform.position.x += 5
+            })
+            genericObjects.forEach(genericObject => {
+                genericObject.position.x += 3
             })
         }
     }
@@ -130,7 +180,6 @@ function animate() {
     if (scrollOffset > 1000) {
         console.log('you win')
     }
-    player.update()
 }
 
 animate()
