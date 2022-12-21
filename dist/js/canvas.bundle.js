@@ -108,7 +108,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _img_platform_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/platform.png */ "./src/img/platform.png");
+/* harmony import */ var _img_platform_png__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../img/platform.png */ "./src/img/platform.png");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -118,10 +118,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var canvas = document.querySelector('canvas');
 var c = canvas.getContext('2d');
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 1024;
+canvas.height = 576;
 var gravity = 1.5;
-console.log(_img_platform_png__WEBPACK_IMPORTED_MODULE_1__["default"]);
+console.log(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 var Player = /*#__PURE__*/function () {
   function Player() {
@@ -166,7 +166,8 @@ var Player = /*#__PURE__*/function () {
 var Platform = /*#__PURE__*/function () {
   function Platform(_ref) {
     var x = _ref.x,
-        y = _ref.y;
+        y = _ref.y,
+        image = _ref.image;
 
     _classCallCheck(this, Platform);
 
@@ -174,28 +175,33 @@ var Platform = /*#__PURE__*/function () {
       x: x,
       y: y
     };
-    this.width = 200;
-    this.height = 20;
+    this.image = image;
+    this.width = image.width;
+    this.height = image.height;
   }
 
   _createClass(Platform, [{
     key: "draw",
     value: function draw() {
-      c.fillStyle = 'blue';
-      c.fillRect(this.position.x, this.position.y, this.width, this.height);
+      c.drawImage(this.image, this.position.x, this.position.y);
     }
   }]);
 
   return Platform;
 }();
 
+var image = new Image();
+image.src = _img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"];
+console.log(image);
 var player = new Player();
 var platforms = [new Platform({
-  x: 200,
-  y: 500
+  x: -1,
+  y: 470,
+  image: image
 }), new Platform({
   x: 500,
-  y: 300
+  y: 300,
+  image: image
 })];
 var keys = {
   right: {
@@ -211,8 +217,8 @@ var scrollOffset = 0;
 function animate() {
   requestAnimationFrame(animate); // clear screen
 
-  c.clearRect(0, 0, canvas.width, canvas.height);
-  player.update();
+  c.fillStyle = 'white';
+  c.fillRect(0, 0, canvas.width, canvas.height);
   platforms.forEach(function (platform) {
     platform.draw();
   });
@@ -247,6 +253,8 @@ function animate() {
   if (scrollOffset > 1000) {
     console.log('you win');
   }
+
+  player.update();
 }
 
 animate();

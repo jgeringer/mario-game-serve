@@ -4,8 +4,8 @@ const canvas = document.querySelector('canvas')
 
 const c = canvas.getContext('2d')
 
-canvas.width = innerWidth
-canvas.height = innerHeight
+canvas.width = 1024
+canvas.height = 576
 
 const gravity = 1.5
 
@@ -50,24 +50,29 @@ class Player {
 }
 
 class Platform {
-    constructor({ x, y }) {
+    constructor({ x, y, image }) {
         this.position = {
             x,
             y
         }
-        this.width = 200
-        this.height = 20
+        this.image = image
+        this.width = image.width
+        this.height = image.height
+
     }
     draw() {
-        c.fillStyle = 'blue'
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.drawImage(this.image, this.position.x, this.position.y)
     }
 }
 
+const image = new Image()
+image.src = platform
+console.log(image)
+
 const player = new Player()
 const platforms = [
-    new Platform({x: 200, y: 500}), 
-    new Platform({x: 500, y: 300})
+    new Platform({x: -1, y: 470, image}), 
+    new Platform({x: 500, y: 300, image})
 ]
 
 const keys = {
@@ -85,8 +90,8 @@ let scrollOffset = 0
 function animate() {
     requestAnimationFrame(animate)
     // clear screen
-    c.clearRect(0, 0, canvas.width, canvas.height)
-    player.update()
+    c.fillStyle = 'white'
+    c.fillRect(0, 0, canvas.width, canvas.height)
 
     platforms.forEach(platform => {
         platform.draw()
@@ -125,6 +130,7 @@ function animate() {
     if (scrollOffset > 1000) {
         console.log('you win')
     }
+    player.update()
 }
 
 animate()
